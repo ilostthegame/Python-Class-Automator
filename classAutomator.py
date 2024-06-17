@@ -1,32 +1,40 @@
-
+# Class automator things
 def main():
+    """
+    Input: Attributes of a class
+    Output: Attributes, constructor, getters and setters code for the class
+    """
     print("Differentiate between constant (SCREAMING_SNAKE_CASE) and constructed (camelCase) attributes")
     num_constructed_attr = int(input("Number of attributes to be constructed: "))
-    num_other_attr = int(input("Number of constant attributes: "))
     construct_names = [input("Constructed attribute: ").split() for i in range(num_constructed_attr)]
-    other_names = [input("Constant attribute: ").split() for i in range(num_other_attr)]
     construct_cap = list(map(convertCapitalize, construct_names)) # List of attribute names to be constructed, in camel case
     construct_under = list(map(convertUnder, construct_names)) # List of attribute names to be constructed, in underscored lower case
-    other_cap = list(map(convertCapitalize, other_names)) # List of attribute names not constructed, in camel case
-    other_under = list(map(convertScreamingSnake, other_names)) # List of attribute names not constructed, in underscored lower case
 
     # Print code
-    for i in attributeList(construct_under, other_under):
+    for i in attributeList(construct_under):
         print(i)
     for i in constructor(construct_cap, construct_under):
         print(i)
-    for i in getters(construct_cap, construct_under, other_cap, other_under):
+    for i in getters(construct_cap, construct_under):
         print(i)
-    for i in setters(construct_cap, construct_under, other_cap, other_under):
+    for i in setters(construct_cap, construct_under):
         print(i)
 
-def attributeList(construct_under, other_under):
+    with open("zMiscTools/classautoepiccode.txt", "w") as file:
+        for i in attributeList(construct_under):
+            file.write(i + "\n")
+        for i in constructor(construct_cap, construct_under):
+            file.write(i+ "\n")
+        for i in getters(construct_cap, construct_under):
+            file.write(i+ "\n")
+        for i in setters(construct_cap, construct_under):
+            file.write(i+ "\n")
+
+def attributeList(construct_under):
     """
     Returns a list of lines to be printed as part of the attribute list
     """
     attribute_list = ['# Attributes']
-    for name in other_under:
-        attribute_list.append(f"__{name} = ")
     for name in construct_under:
         attribute_list.append(f"__{name} = None")
     return attribute_list
@@ -41,7 +49,7 @@ def constructor(construct_cap, construct_under):
         constructor_list.append(f"    self.set{attr[0]}({attr[1]})") # setter function for each constructed attribute
     return constructor_list
     
-def getters(construct_cap, construct_under, other_cap, other_under):
+def getters(construct_cap, construct_under):
     """
     Returns a list lines that represent the getters' code
     """
@@ -51,7 +59,7 @@ def getters(construct_cap, construct_under, other_cap, other_under):
         getter_list.append(f"    return self.__{attr[1]}")
     return getter_list
 
-def setters(construct_cap, construct_under, other_cap, other_under):
+def setters(construct_cap, construct_under):
     """
     Returns a list lines that represent the setters' code
     """
@@ -59,6 +67,7 @@ def setters(construct_cap, construct_under, other_cap, other_under):
     for attr in zip(construct_cap, construct_under):
         setter_list.append(f"def set{attr[0]}(self, {attr[1]}):")
         setter_list.append(f"    self.__{attr[1]} = {attr[1]}")
+
     return setter_list
 
 def convertCapitalize(word_list):
